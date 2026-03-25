@@ -1,597 +1,568 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Little Quest...</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        body {
-            background-color: #FDFBF7; 
-            color: #5D4037;
-            font-family: 'Fredoka', sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Little Quest...</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #FDFBF7; 
+            color: #5D4037;
+            font-family: 'Fredoka', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
 
-        .stage {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
-            box-sizing: border-box;
-            animation: fadeIn 0.8s ease forwards;
-        }
+        .stage {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            animation: fadeIn 0.8s ease forwards;
+        }
 
-        .stage.active {
-            display: flex;
-        }
+        .stage.active {
+            display: flex;
+        }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-        h1, h2 {
-            color: #6D4C41;
-            font-size: 2.2rem;
-            margin-bottom: 5px;
-            letter-spacing: 1px;
-        }
+        h1, h2 {
+            color: #6D4C41;
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
 
-        .text-container {
-            min-height: 160px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            max-width: 600px;
-        }
+        .text-container {
+            min-height: 160px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
 
-        p.dialogue, p.riddle-text {
-            font-size: 1.3rem;
-            line-height: 1.8;
-            color: #795548;
-            margin: 0 0 20px 0;
-            animation: fadeIn 0.5s ease;
-            text-align: center;
-        }
+        p.dialogue, p.riddle-text {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            color: #795548;
+            margin: 0 0 20px 0;
+            animation: fadeIn 0.5s ease;
+            text-align: center;
+        }
 
-        p.dialogue {
-            font-style: italic;
-            color: #8D6E63;
-        }
+        p.dialogue {
+            font-style: italic;
+            color: #8D6E63;
+        }
 
-        p.riddle-text {
-            font-weight: 600;
-        }
+        p.riddle-text {
+            font-weight: 600;
+        }
 
-        pre.ascii {
-            font-family: 'Courier New', monospace;
-            font-size: 1.1rem;
-            color: #A1887F;
-            margin: 10px 0 30px 0;
-            line-height: 1.1;
-            display: inline-block; 
-            text-align: left;
-            animation: float 4s ease-in-out infinite;
-        }
+        pre.ascii {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            color: #A1887F;
+            margin: 10px 0 30px 0;
+            line-height: 1.1;
+            display: inline-block; 
+            text-align: left;
+            animation: float 4s ease-in-out infinite;
+        }
 
-        pre.block-ascii {
-            font-family: 'Courier New', monospace;
-            font-size: 1rem;
-            color: #A1887F;
-            margin: 10px 0 30px 0;
-            line-height: 1; 
-            letter-spacing: 0;
-            display: inline-block; 
-            text-align: left;
-            animation: float 4s ease-in-out infinite;
-        }
+        /* Special class for block characters to prevent vertical gaps */
+        pre.block-ascii {
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            color: #A1887F;
+            margin: 10px 0 30px 0;
+            line-height: 1; 
+            letter-spacing: 0;
+            display: inline-block; 
+            text-align: left;
+            animation: float 4s ease-in-out infinite;
+        }
 
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
-            100% { transform: translateY(0px); }
-        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
 
-        input {
-            font-family: 'Fredoka', sans-serif;
-            font-size: 1.5rem;
-            background-color: transparent;
-            border: none;
-            border-bottom: 3px dashed #D7CCC8;
-            border-radius: 0;
-            color: #5D4037;
-            text-align: center;
-            padding: 10px;
-            margin-bottom: 25px;
-            width: 100%;
-            max-width: 250px;
-            outline: none;
-            transition: all 0.3s ease;
-        }
+        input {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5rem;
+            background-color: transparent;
+            border: none;
+            border-bottom: 3px dashed #D7CCC8;
+            border-radius: 0;
+            color: #5D4037;
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 25px;
+            width: 100%;
+            max-width: 250px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
 
-        input:focus {
-            border-bottom-color: #FFB6C1;
-        }
+        input:focus {
+            border-bottom-color: #FFB6C1;
+        }
 
-        button {
-            font-family: 'Fredoka', sans-serif;
-            font-size: 1.2rem;
-            padding: 12px 35px;
-            background-color: #FFF;
-            border: 2px dashed #D7CCC8;
-            border-radius: 20px;
-            color: #795548;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
+        button {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.2rem;
+            padding: 12px 35px;
+            background-color: #FFF;
+            border: 2px dashed #D7CCC8;
+            border-radius: 20px;
+            color: #795548;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
 
-        button:hover {
-            background-color: #FAF3E0;
-            border-color: #D7CCC8;
-            color: #5D4037;
-            transform: translateY(-2px);
-        }
+        button:hover {
+            background-color: #FAF3E0;
+            border-color: #D7CCC8;
+            color: #5D4037;
+            transform: translateY(-2px);
+        }
 
-        .continue-btn {
-            background-color: transparent;
-            border: none;
-            border-bottom: 2px solid transparent;
-            border-radius: 0;
-            padding: 5px 10px;
-            color: #A1887F;
-            font-size: 1.1rem;
-            margin-top: 10px;
-        }
+        .continue-btn {
+            background-color: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            border-radius: 0;
+            padding: 5px 10px;
+            color: #A1887F;
+            font-size: 1.1rem;
+            margin-top: 10px;
+        }
 
-        .continue-btn:hover {
-            background-color: transparent;
-            color: #5D4037;
-            border-bottom-color: #A1887F;
-            transform: none;
-        }
+        .continue-btn:hover {
+            background-color: transparent;
+            color: #5D4037;
+            border-bottom-color: #A1887F;
+            transform: none;
+        }
 
-        .ascii-letter {
-            font-family: 'Courier New', monospace;
-            font-size: 1.2rem;
-            color: #5D4037;
-            text-align: left;
-            line-height: 1.6;
-            border: 2px dashed #A1887F;
-            padding: 30px;
-            border-radius: 10px;
-            max-width: 550px;
-            width: 90%;
-            margin: 20px 0;
-            background: transparent;
-        }
+        .ascii-letter {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            color: #5D4037;
+            text-align: left;
+            line-height: 1.6;
+            border: 2px dashed #A1887F;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 550px;
+            width: 90%;
+            margin: 20px 0;
+            background: transparent;
+        }
 
-        .btn-group {
-            display: flex;
-            gap: 20px;
-            margin-top: 20px;
-            justify-content: center;
-            width: 100%;
-            position: relative;
-            min-height: 50px;
-        }
+        .btn-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            justify-content: center;
+            width: 100%;
+            position: relative;
+            min-height: 50px;
+        }
 
-        #no-btn {
-            position: relative;
-        }
-
-        /* Responsive Mobile Styles */
-        @media (max-width: 600px) {
-            h1, h2 { font-size: 1.8rem; }
-            p.dialogue, p.riddle-text { font-size: 1.1rem; }
-            input { font-size: 1.3rem; }
-            
-            /* Shrink ASCII blocks so they fit on screen */
-            pre.ascii { font-size: 0.8rem; }
-            pre.block-ascii { font-size: 0.65rem; }
-            
-            /* The cop car is very wide, so it needs to be extra small on mobile */
-            #stage-cops pre.ascii { font-size: 0.4rem; letter-spacing: -0.5px; } 
-            
-            .ascii-letter { font-size: 1rem; padding: 15px; }
-            button { font-size: 1rem; padding: 10px 25px; }
-        }
-
-        @media (max-width: 400px) {
-            pre.ascii { font-size: 0.65rem; }
-            pre.block-ascii { font-size: 0.5rem; }
-            #stage-cops pre.ascii { font-size: 0.3rem; }
-            h1, h2 { font-size: 1.5rem; }
-        }
-    </style>
+        #no-btn {
+            position: relative;
+        }
+    </style>
 </head>
 <body>
 
-    <div id="stage-intro" class="stage active">
-        <h2>A Hidden Path</h2>
-        <div class="text-container">
-            <p class="dialogue">
-                You have stumbled upon a mysterious webpage.<br>
-                Do you wish to continue?
-            </p>
-            <div class="btn-group">
-                <button onclick="goTo('stage-riddle1')">Yes</button>
-                <button onclick="introGameOver()">No</button>
-            </div>
-        </div>
-    </div>
+    <div id="stage-intro" class="stage active">
+        <h2>A Hidden Path</h2>
+        <div class="text-container">
+            <p class="dialogue">
+                You have stumbled upon a mysterious webpage.<br>
+                Do you wish to continue?
+            </p>
+            <div class="btn-group">
+                <button onclick="goTo('stage-riddle1')">Yes</button>
+                <button onclick="introGameOver()">No</button>
+            </div>
+        </div>
+    </div>
 
-    <div id="stage-riddle1" class="stage">
-        <h2>The Encounter</h2>
-        <pre class="ascii">
-      .  * .  . * * .
-   * .    _..._    .   *
-      * .'     '.   *
-         /  \   /  \
-     .   | (O) (O) |    .
-      * \    _    /  *
-    .     '._____.'     .
-        </pre>
-        <div class="text-container">
-            <div id="dialogue-1">
-                <p class="dialogue">
-                    "Halt, traveler," the creature squeaks.<br>
-                    "To pass through my domain, you must prove your intellect.<br>
-                    Hear my first trial."
-                </p>
-                <button class="continue-btn" onclick="revealRiddle(1)">Click to continue</button>
-            </div>
-            <div id="riddle-box-1" style="display: none; flex-direction: column; align-items: center; width: 100%;">
-                <p class="riddle-text">
-                    "I am a beast of two shades,<br>
-                    born to a diet my stomach was never meant for.<br>
-                    I am a symbol of harmony,<br>
-                    yet my most famous kin is a master of martial arts.<br><br>
-                    Name my kind."
-                </p>
-                <input type="text" id="ans1" placeholder="Type here..." autocomplete="off">
-                <button onclick="checkRiddle(1, 'panda', 'Your logic is flawed.<br>You have angered the spirits of the Jade Palace.<br>You\'re arrested by the Dragon Warrior!')">Submit</button>
-            </div>
-        </div>
-    </div>
+    <div id="stage-riddle1" class="stage">
+        <h2>The Encounter</h2>
+        <pre class="ascii">
+      .  * .  . * * .
+   * .    _..._    .   *
+      * .'     '.   *
+         /  \   /  \
+     .   | (O) (O) |    .
+      * \    _    /  *
+    .     '._____.'     .
+        </pre>
+        <div class="text-container">
+            <div id="dialogue-1">
+                <p class="dialogue">
+                    "Halt, traveler," the creature squeaks.<br>
+                    "To pass through my domain, you must prove your intellect.<br>
+                    Hear my first trial."
+                </p>
+                <button class="continue-btn" onclick="revealRiddle(1)">Click to continue</button>
+            </div>
+            <div id="riddle-box-1" style="display: none; flex-direction: column; align-items: center; width: 100%;">
+                <p class="riddle-text">
+                    "I am a beast of two shades,<br>
+                    born to a diet my stomach was never meant for.<br>
+                    I am a symbol of harmony,<br>
+                    yet my most famous kin is a master of martial arts.<br><br>
+                    Name my kind."
+                </p>
+                <input type="text" id="ans1" placeholder="Type here..." autocomplete="off">
+                <button onclick="checkRiddle(1, 'panda', 'Your logic is flawed.<br>You have angered the spirits of the Jade Palace.<br>You\'re arrested by the Dragon Warrior!')">Submit</button>
+            </div>
+        </div>
+    </div>
 
-    <div id="stage-riddle2" class="stage">
-        <h2>The Second Trial</h2>
-        <pre class="ascii">
-      .  * .  . * * .
-   * .    _..._    .   *
-      * .'     '.   *
-         /  _   _  \
-     .   | (^) (^) |    .
-      * \    v    /  *
-    .     '._____.'     .
-        </pre>
-        <div class="text-container">
-            <div id="dialogue-2">
-                <p class="dialogue">
-                    "Acceptable," the guardian nods slowly.<br>
-                    "But let us see if you can unravel<br>
-                    the hidden meanings of the world."
-                </p>
-                <button class="continue-btn" onclick="revealRiddle(2)">Click to continue</button>
-            </div>
-            <div id="riddle-box-2" style="display: none; flex-direction: column; align-items: center; width: 100%;">
-                <p class="riddle-text">
-                    "I am five fingers wrapped in warmth<br>
-                    when we walk side-by-side.<br>
-                    Yet, I am also a hidden whisper of four letters,<br>
-                    wishing you a peaceful slumber.<br><br>
-                    What am I?"
-                </p>
-                <input type="text" id="ans2" placeholder="Type here..." autocomplete="off">
-                <button onclick="checkRiddle(2, 'hand', 'A severe misstep in the realm of dreams.<br>The curse of the restless sleeper falls upon you.<br>And now your pillow will always be warm on both sides!')">Submit</button>
-            </div>
-        </div>
-    </div>
+    <div id="stage-riddle2" class="stage">
+        <h2>The Second Trial</h2>
+        <pre class="ascii">
+      .  * .  . * * .
+   * .    _..._    .   *
+      * .'     '.   *
+         /  _   _  \
+     .   | (^) (^) |    .
+      * \    v    /  *
+    .     '._____.'     .
+        </pre>
+        <div class="text-container">
+            <div id="dialogue-2">
+                <p class="dialogue">
+                    "Acceptable," the guardian nods slowly.<br>
+                    "But let us see if you can unravel<br>
+                    the hidden meanings of the world."
+                </p>
+                <button class="continue-btn" onclick="revealRiddle(2)">Click to continue</button>
+            </div>
+            <div id="riddle-box-2" style="display: none; flex-direction: column; align-items: center; width: 100%;">
+                <p class="riddle-text">
+                    "I am five fingers wrapped in warmth<br>
+                    when we walk side-by-side.<br>
+                    Yet, I am also a hidden whisper of four letters,<br>
+                    wishing you a peaceful slumber.<br><br>
+                    What am I?"
+                </p>
+                <input type="text" id="ans2" placeholder="Type here..." autocomplete="off">
+                <button onclick="checkRiddle(2, 'hand', 'A severe misstep in the realm of dreams.<br>The curse of the restless sleeper falls upon you.<br>And now your pillow will always be warm on both sides!')">Submit</button>
+            </div>
+        </div>
+    </div>
 
-    <div id="stage-riddle3" class="stage">
-        <h2>The Final Truth</h2>
-        <pre class="ascii">
-      .  * .  . * * .
-   * .    _..._    .   *
-      * .'     '.   *
-         /  -   -  \
-     .   | (-) (-) |    .
-      * \    _    /  *
-    .     '._____.'     .
-        </pre>
-        <div class="text-container">
-            <div id="dialogue-3">
-                <p class="dialogue">
-                    "You are surprisingly resilient," the entity sighs.<br>
-                    "But this final test requires absolute self-awareness.<br>
-                    Look deep into the abyss..."
-                </p>
-                <button class="continue-btn" onclick="revealRiddle(3)">Click to continue</button>
-            </div>
-            <div id="riddle-box-3" style="display: none; flex-direction: column; align-items: center; width: 100%;">
-                <p class="riddle-text">
-                    "Search the cosmos, scour human history,<br>
-                    and look closely in the mirror.<br><br>
-                    Who is the undisputed champion of the stinky realm,<br>
-                    the one true sovereign of the smelly domain?"
-                </p>
-                <input type="text" id="ans3" placeholder="Type here..." autocomplete="off">
-                <button onclick="checkRiddle(3, 'me', 'Denial is a dangerous game.<br>The noxious fumes of deceit overwhelm you.<br>And now you\'re mati kena bau jigong!')">Submit</button>
-            </div>
-        </div>
-    </div>
+    <div id="stage-riddle3" class="stage">
+        <h2>The Final Truth</h2>
+        <pre class="ascii">
+      .  * .  . * * .
+   * .    _..._    .   *
+      * .'     '.   *
+         /  -   -  \
+     .   | (-) (-) |    .
+      * \    _    /  *
+    .     '._____.'     .
+        </pre>
+        <div class="text-container">
+            <div id="dialogue-3">
+                <p class="dialogue">
+                    "You are surprisingly resilient," the entity sighs.<br>
+                    "But this final test requires absolute self-awareness.<br>
+                    Look deep into the abyss..."
+                </p>
+                <button class="continue-btn" onclick="revealRiddle(3)">Click to continue</button>
+            </div>
+            <div id="riddle-box-3" style="display: none; flex-direction: column; align-items: center; width: 100%;">
+                <p class="riddle-text">
+                    "Search the cosmos, scour human history,<br>
+                    and look closely in the mirror.<br><br>
+                    Who is the undisputed champion of the stinky realm,<br>
+                    the one true sovereign of the smelly domain?"
+                </p>
+                <input type="text" id="ans3" placeholder="Type here..." autocomplete="off">
+                <button onclick="checkRiddle(3, 'me', 'Denial is a dangerous game.<br>The noxious fumes of deceit overwhelm you.<br>And now you\'re mati kena bau jigong!')">Submit</button>
+            </div>
+        </div>
+    </div>
 
-    <div id="stage-gameover" class="stage">
-        <h1 style="color: #E57373;">GAME OVER</h1>
-        <div class="text-container">
-            <p class="dialogue" id="gameover-msg" style="color: #E57373; font-weight: bold;"></p>
-            <button onclick="retryCurrent()">Beg for Mercy</button>
-        </div>
-    </div>
+    <div id="stage-gameover" class="stage">
+        <h1 style="color: #E57373;">GAME OVER</h1>
+        <div class="text-container">
+            <p class="dialogue" id="gameover-msg" style="color: #E57373; font-weight: bold;"></p>
+            <button onclick="retryCurrent()">Beg for Mercy</button>
+        </div>
+    </div>
 
-    <div id="stage-safe" class="stage">
-        <h2>The Path Clears</h2>
-        <pre class="block-ascii">
-▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒    
+    <div id="stage-safe" class="stage">
+        <h2>The Path Clears</h2>
+        <pre class="block-ascii">
+▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒    
 ▓▓▓▓▓▓▒▒▒▒░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 ▓▓▓▓░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 ▓▓▓▓▒▒░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 ▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░░▒▒  ▒▒▒▒▒▒░░░░░░
+▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░░▒▒  ▒▒▒▒▒▒░░░░░░
 ▓▓▓▓▓▓▓▓░░░░░░░░░░▓▓░░▒▒▒▒██▒▒▓▓██░░░░░░
 ▓▓▓▓▓▓▓▓░░░░▓▓▒▒▒▒▒▒▒▒▒▒▓▓▒▒▓▓██▓▓░░░░░░
-▓▓▓▓▓▓▓▓░░░░░░▒▒▒▒▓▓░░▒▒██▒▒▒▒▒▒  ░░░░░░
-▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░░░░▓▓  ▒▒░░░░░░░░
+▓▓▓▓▓▓▓▓░░░░░░▒▒▒▒▓▓░░▒▒██▒▒▒▒▒▒  ░░░░░░
+▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░░░░▓▓  ▒▒░░░░░░░░
 ▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-  ▓▓▓▓▓▓░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  
-      ▓▓░░░░░░░░░░                      
-        </pre>
-        <div class="text-container">
-            <div id="dialogue-safe">
-                <p class="dialogue">
-                    The guardian vanishes into thin air,<br>
-                    leaving behind a heavy steel safe.
-                </p>
-                <button class="continue-btn" onclick="revealSafe()">Click to continue</button>
-            </div>
-            <div id="safe-box" style="display: none; flex-direction: column; align-items: center; width: 100%;">
-                <p class="riddle-text">
-                    Enter the 4-digit PIN.<br>
-                    <span style="font-size: 1rem; color: #A1887F; font-weight: normal;">(Attempts left: <span id="attempts">3</span>)</span>
-                </p>
-                <input type="password" id="pin-input" maxlength="4" placeholder="****">
-                <button onclick="checkPin()">Unlock</button>
-            </div>
-        </div>
-    </div>
+  ▓▓▓▓▓▓░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  
+      ▓▓░░░░░░░░░░                      
+        </pre>
+        <div class="text-container">
+            <div id="dialogue-safe">
+                <p class="dialogue">
+                    The guardian vanishes into thin air,<br>
+                    leaving behind a heavy steel safe.
+                </p>
+                <button class="continue-btn" onclick="revealSafe()">Click to continue</button>
+            </div>
+            <div id="safe-box" style="display: none; flex-direction: column; align-items: center; width: 100%;">
+                <p class="riddle-text">
+                    Enter the 4-digit PIN.<br>
+                    <span style="font-size: 1rem; color: #A1887F; font-weight: normal;">(Attempts left: <span id="attempts">3</span>)</span>
+                </p>
+                <input type="password" id="pin-input" maxlength="4" placeholder="****">
+                <button onclick="checkPin()">Unlock</button>
+            </div>
+        </div>
+    </div>
 
-    <div id="stage-cops" class="stage">
-        <h1 style="color: #E57373;">WEE WOO WEE WOO</h1>
-        <pre class="ascii">
-                ▒▒▒▒▒▒                                              
-                ▒▒▒▒▒▒▒▒▒▒                                          
-██████████▒▒▒▒▒▒▒▒████                                      
-░░░░██████████▒▒▒▒▒▒██████                                      
-░░░░░░██████████████████████                                    
-░░░░░░░░████████████████████████                                  
-░░░░░░░░██████░░░░░░██░░░░░░░░████                                  
-░░░░░░░░░░░░░░░░██████░░░░░░░░██░░░░░░░░████                                  
-░░░░░░░░░░░░░░░░██████░░░░░░░░░░██░░░░░░░░████░░                                
-░░░░░░░░░░░░░░████████████████████████████████░░░░                              
-██░░░░░░░░░░░░░░░░██████████░░██░░░░██░░████████░░░░░░                            
-████░░░░░░░░░░░░░░░░██████░░░░░░░░░░░░░░░░██████░░░░░░░░                          
-████████░░░░▒▒▒▒░░░░██████░░░░░░░░░░░░░░░░████░░░░░░░░░░░░                        
-  ████████▒▒▒▒▒▒▒▒░░████████░░░░░░░░░░░░████▒▒▒▒▒▒▒▒░░░░░░                        
-    ████▒▒▒▒░░░░▒▒▒▒████████████████████████▒▒░░░░▒▒░░░░                          
-        ▒▒▒▒░░░░▒▒▒▒                ██████▒▒▒▒░░░░▒▒▒▒                      
-        ▒▒▒▒▒▒▒▒▒▒▒▒                    ▒▒▒▒▒▒▒▒▒▒▒▒                      
-          ▒▒▒▒▒▒▒▒                        ▒▒▒▒▒▒▒▒                        
-        </pre>
-        <div class="text-container">
-            <p class="dialogue" style="color: #E57373;">
-                The alarm trips. You failed 3 times.<br>
-                The authorities have arrived.
-            </p>
-            <button onclick="location.reload()">Serve 10 years and restart</button>
-        </div>
-    </div>
+    <div id="stage-cops" class="stage">
+        <h1 style="color: #E57373;">WEE WOO WEE WOO</h1>
+        <pre class="ascii">
+                                          ▒▒▒▒▒▒                                              
+                                          ▒▒▒▒▒▒▒▒▒▒                                         
+                                  ██████████▒▒▒▒▒▒▒▒████                                       
+                                ░░░░██████████▒▒▒▒▒▒██████                                     
+                                ░░░░░░██████████████████████                                   
+                              ░░░░░░░░████████████████████████                                 
+                            ░░░░░░░░██████░░░░░░██░░░░░░░░████                                 
+                  ░░░░░░░░░░░░░░░░██████░░░░░░░░██░░░░░░░░████                                 
+                ░░░░░░░░░░░░░░░░██████░░░░░░░░░░██░░░░░░░░████░░                               
+                ░░░░░░░░░░░░░░████████████████████████████████░░░░                             
+              ██░░░░░░░░░░░░░░░░██████████░░██░░░░██░░████████░░░░░░                           
+              ████░░░░░░░░░░░░░░░░██████░░░░░░░░░░░░░░░░██████░░░░░░░░                         
+              ████████░░░░▒▒▒▒░░░░██████░░░░░░░░░░░░░░░░████░░░░░░░░░░░░                       
+                ████████▒▒▒▒▒▒▒▒░░████████░░░░░░░░░░░░████▒▒▒▒▒▒▒▒░░░░░░                       
+                  ████▒▒▒▒░░░░▒▒▒▒████████████████████████▒▒░░░░▒▒░░░░                         
+                      ▒▒▒▒░░░░▒▒▒▒                ██████▒▒▒▒░░░░▒▒▒▒                     
+                      ▒▒▒▒▒▒▒▒▒▒▒▒                      ▒▒▒▒▒▒▒▒▒▒▒▒                     
+                        ▒▒▒▒▒▒▒▒                          ▒▒▒▒▒▒▒▒                       
+        </pre>
+        <div class="text-container">
+            <p class="dialogue" style="color: #E57373;">
+                The alarm trips. You failed 3 times.<br>
+                The authorities have arrived.
+            </p>
+            <button onclick="location.reload()">Serve 10 years and restart</button>
+        </div>
+    </div>
 
-    <div id="stage-inside" class="stage">
-        <h2>Click.</h2>
-        <pre class="block-ascii">
-     ░░  ██████          
-   ░░     ██▓▓▓▓▓▓██        
-  ░░  ▒▒░░  ▓▓▓▓▓▓▓▓██      
-██  ░░  ▒▒░░  ██▓▓▓▓▓▓██    
-████▓▓▓▓  ░░▒▒░░  ▓▓▓▓▓▓▓▓▓▓██  
-██▓▓▓▓▓▓▓▓  ░░▒▒░░▓▓▓▓▓▓▓▓▓▓▓▓██
-██▓▓▓▓▓▓▓▓░░  ▒▒  ░░▓▓▓▓▓▓▓▓░░▓▓
-██▓▓░░▓▓▓▓▓▓░░▒▒░░  ██▓▓▒▒░░▒▒▒▒
-██▓▓░░░░▓▓▓▓  ▒▒░░  ▒▒░░░░░░▓▓██
-  ██▓▓░░░░▓▓██░░▒▒  ▒▒░░▓▓▓▓████
-    ██▓▓░░░░▒▒  ▒▒░░██▓▓████    
-      ██▓▓░░░░▒▒  ▒▒████        
-        ██▓▓▓▓▓▓██▓▓            
-          ████████          
-        </pre>
-        <div class="text-container">
-            <p class="dialogue">
-                The heavy metal door swings open smoothly.<br>
-                Inside, you find a pen resting on top of a folded document.
-            </p>
-            <button onclick="goTo('stage-letter')">Unfold the Document</button>
-        </div>
-    </div>
+    <div id="stage-inside" class="stage">
+        <h2>Click.</h2>
+        <pre class="block-ascii">
+             ░░  ██████          
+        ░░    ██▓▓▓▓▓▓██        
+      ░░  ▒▒░░  ▓▓▓▓▓▓▓▓██      
+    ██  ░░  ▒▒░░  ██▓▓▓▓▓▓██    
+████▓▓▓▓  ░░▒▒░░  ▓▓▓▓▓▓▓▓▓▓██  
+██▓▓▓▓▓▓▓▓  ░░▒▒░░▓▓▓▓▓▓▓▓▓▓▓▓██
+██▓▓▓▓▓▓▓▓░░  ▒▒  ░░▓▓▓▓▓▓▓▓░░▓▓
+██▓▓░░▓▓▓▓▓▓░░▒▒░░  ██▓▓▒▒░░▒▒▒▒
+██▓▓░░░░▓▓▓▓  ▒▒░░  ▒▒░░░░░░▓▓██
+  ██▓▓░░░░▓▓██░░▒▒  ▒▒░░▓▓▓▓████
+    ██▓▓░░░░▒▒  ▒▒░░██▓▓████    
+      ██▓▓░░░░▒▒  ▒▒████        
+        ██▓▓▓▓▓▓██▓▓            
+          ████████          
+        </pre>
+        <div class="text-container">
+            <p class="dialogue">
+                The heavy metal door swings open smoothly.<br>
+                Inside, you find a pen resting on top of a folded document.
+            </p>
+            <button onclick="goTo('stage-letter')">Unfold the Document</button>
+        </div>
+    </div>
 
-    <div id="stage-letter" class="stage">
-        <h2>A Message For You</h2>
-        
-        <div class="ascii-letter">
-            Dear smelliest, stinkiest bocil,<br><br>
-            As you know, I'm still very much in love with you. Meskipun mungkin kadang ga keliatan karena kita lumayan sering berantem, dan aku sadar kelakuanku masih sering jauh dari ekspektasi kamu, bikin kamu sebel, kesel, bad mood, dan banyak lagi :((<br><br>
-            But despite all that, it is so clear to me that I want to be with you. I'm genuinely so happy when we're together, and I just love being around you. It's always fun. I love hearing your voice, dengerin kamu yapping, atau sekadar ngobrol dari chat aja udah bikin seneng. I love seeing your bare face on vc (maklum ldr), apalagi kalau kita bisa ketemu langsung.<br><br>
-            I was actually planning to write a veryyy, very long text here, but I figured it’s better for me to just state it as clearly as my feelings for you.<br><br>
-            So, I have one final question for you...<br><br>
-            Will you be my girlfriend?<br><br>
-            
-            <div style="text-align: center; font-weight: bold;">
-                [ &nbsp;&nbsp; ] YES &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [ &nbsp;&nbsp; ] NO
-            </div>
-        </div>
+    <div id="stage-letter" class="stage">
+        <h2>A Message For You</h2>
+        
+        <div class="ascii-letter">
+            Dear smelliest, stinkiest bocil,<br><br>
+            As you know, I'm still very much in love with you. Meskipun mungkin kadang ga keliatan karena kita lumayan sering berantem, dan aku sadar kelakuanku masih sering jauh dari ekspektasi kamu, bikin kamu sebel, kesel, bad mood, dan banyak lagi :((<br><br>
+            But despite all that, it is so clear to me that I want to be with you. I'm genuinely so happy when we're together, and I just love being around you. It's always fun. I love hearing your voice, dengerin kamu yapping, atau sekadar ngobrol dari chat aja udah bikin seneng. I love seeing your bare face on vc (maklum ldr), apalagi kalau kita bisa ketemu langsung.<br><br>
+            I was actually planning to write a veryyy, very long text here, but I figured it’s better for me to just state it as clearly as my feelings for you.<br><br>
+            So, I have one final question for you...<br><br>
+            Will you be my girlfriend?<br><br>
+            
+            <div style="text-align: center; font-weight: bold;">
+                [ &nbsp;&nbsp; ] YES &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [ &nbsp;&nbsp; ] NO
+            </div>
+        </div>
 
-        <div id="mark-btn-container" style="text-align: center; margin-top: 10px;">
-            <button onclick="revealYesNo()">Click to mark your answer</button>
-        </div>
+        <div id="mark-btn-container" style="text-align: center; margin-top: 10px;">
+            <button onclick="revealYesNo()">Click to mark your answer</button>
+        </div>
 
-        <div id="yes-no-box" class="btn-group" style="display: none; animation: fadeIn 0.8s ease;">
-            <button id="yes-btn" onclick="goTo('stage-success')">YES</button>
-            <button id="no-btn">NO</button>
-        </div>
-    </div>
+        <div id="yes-no-box" class="btn-group" style="display: none; animation: fadeIn 0.8s ease;">
+            <button id="yes-btn" onclick="goTo('stage-success')">YES</button>
+            <button id="no-btn">NO</button>
+        </div>
+    </div>
 
-    <div id="stage-success" class="stage">
-        <h1>YAYYYYYIIKKKK!</h1>
-        <pre class="ascii">
-        ████████████████        
-    ████▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒████    
-  ██▒▒▒▒▒▒░░░░░░░░░░░░▒▒▒▒▒▒██  
+    <div id="stage-success" class="stage">
+        <h1>YAYYYYYIIKKKK!</h1>
+        <pre class="ascii">
+        ████████████████        
+    ████▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒████    
+  ██▒▒▒▒▒▒░░░░░░░░░░░░▒▒▒▒▒▒██  
 ██▒▒▒▒░░░░░░██░░░░██░░░░░░▒▒▒▒██
-██▒▒▒▒░░░░  ██    ██  ░░░░▒▒▒▒██
+██▒▒▒▒░░░░  ██    ██  ░░░░▒▒▒▒██
 ██▒▒▒▒░░░░░░██░░░░██░░░░░░▒▒▒▒██
-  ██▒▒▒▒▒▒░░░░░░░░░░░░▒▒▒▒▒▒██  
-    ████▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒████    
-        ████████████████        
-  ████      ██░░░░██      ████  
-██░░░░████  ██░░░░██  ████░░░░██
+  ██▒▒▒▒▒▒░░░░░░░░░░░░▒▒▒▒▒▒██  
+    ████▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒████    
+        ████████████████        
+  ████      ██░░░░██      ████  
+██░░░░████  ██░░░░██  ████░░░░██
 ██░░░░░░░░████░░░░████░░░░░░░░██
 ██░░░░░░░░░░██░░░░██░░░░░░░░░░██
-  ██░░░░░░░░██░░░░██░░░░░░░░██  
-    ████░░░░░░░░░░░░░░░░████    
-        ████████████████        
-            
-        </pre>
-        <p class="dialogue" style="font-weight: bold;">
-            hawwooo pacarrrr :>>><br>
-            mee so heffyyyy<br>
-            ayo nanti kita main pees lagi sayangggggg
-        </p>      
-    </div>
+  ██░░░░░░░░██░░░░██░░░░░░░░██  
+    ████░░░░░░░░░░░░░░░░████    
+        ████████████████        
+            
+        </pre>
+        <p class="dialogue" style="font-weight: bold;">
+            hawwooo pacarrrr :>>><br>
+            mee so heffyyyy<br>
+            ayo nanti kita main pees lagi sayangggggg
+        </p>     
+    </div>
 
-    <script>
-        let currentStageId = 'stage-intro';
+    <script>
+        let currentStageId = 'stage-intro';
 
-        function goTo(nextStageId) {
-            document.querySelectorAll('.stage').forEach(el => el.classList.remove('active'));
-            document.getElementById(nextStageId).classList.add('active');
-            document.querySelectorAll('input').forEach(input => input.value = '');
-        }
+        function goTo(nextStageId) {
+            document.querySelectorAll('.stage').forEach(el => el.classList.remove('active'));
+            document.getElementById(nextStageId).classList.add('active');
+            document.querySelectorAll('input').forEach(input => input.value = '');
+        }
 
-        function introGameOver() {
-            currentStageId = 'stage-intro'; 
-            document.getElementById('gameover-msg').innerHTML = "You gave up before even trying.<br>The journey ends here, penakut!";
-            goTo('stage-gameover');
-        }
+        function introGameOver() {
+            currentStageId = 'stage-intro'; 
+            document.getElementById('gameover-msg').innerHTML = "You gave up before even trying.<br>The journey ends here, penakut!";
+            goTo('stage-gameover');
+        }
 
-        function revealRiddle(num) {
-            document.getElementById('dialogue-' + num).style.display = 'none';
-            document.getElementById('riddle-box-' + num).style.display = 'flex';
-        }
+        function revealRiddle(num) {
+            document.getElementById('dialogue-' + num).style.display = 'none';
+            document.getElementById('riddle-box-' + num).style.display = 'flex';
+        }
 
-        function revealSafe() {
-            document.getElementById('dialogue-safe').style.display = 'none';
-            document.getElementById('safe-box').style.display = 'flex';
-        }
+        function revealSafe() {
+            document.getElementById('dialogue-safe').style.display = 'none';
+            document.getElementById('safe-box').style.display = 'flex';
+        }
 
-        function revealYesNo() {
-            document.getElementById('mark-btn-container').style.display = 'none';
-            document.getElementById('yes-no-box').style.display = 'flex';
-        }
+        function revealYesNo() {
+            document.getElementById('mark-btn-container').style.display = 'none';
+            document.getElementById('yes-no-box').style.display = 'flex';
+        }
 
-        function checkRiddle(riddleNum, correctAns, failMsg) {
-            let inputId = 'ans' + riddleNum;
-            let userAnswer = document.getElementById(inputId).value.toLowerCase().trim();
-            
-            if (userAnswer === correctAns) {
-                if (riddleNum === 1) goTo('stage-riddle2');
-                if (riddleNum === 2) goTo('stage-riddle3');
-                if (riddleNum === 3) goTo('stage-safe');
-            } else {
-                currentStageId = 'stage-riddle' + riddleNum; 
-                document.getElementById('gameover-msg').innerHTML = failMsg;
-                goTo('stage-gameover');
-            }
-        }
+        function checkRiddle(riddleNum, correctAns, failMsg) {
+            let inputId = 'ans' + riddleNum;
+            let userAnswer = document.getElementById(inputId).value.toLowerCase().trim();
+            
+            if (userAnswer === correctAns) {
+                if (riddleNum === 1) goTo('stage-riddle2');
+                if (riddleNum === 2) goTo('stage-riddle3');
+                if (riddleNum === 3) goTo('stage-safe');
+            } else {
+                currentStageId = 'stage-riddle' + riddleNum; 
+                document.getElementById('gameover-msg').innerHTML = failMsg;
+                goTo('stage-gameover');
+            }
+        }
 
-        function retryCurrent() {
-            if (currentStageId.includes('riddle')) {
-                let stageNum = currentStageId.replace('stage-riddle', '');
-                if(document.getElementById('dialogue-' + stageNum)) {
-                    document.getElementById('dialogue-' + stageNum).style.display = 'block';
-                    document.getElementById('riddle-box-' + stageNum).style.display = 'none';
-                }
-            }
-            goTo(currentStageId);
-        }
+        function retryCurrent() {
+            if (currentStageId.includes('riddle')) {
+                let stageNum = currentStageId.replace('stage-riddle', '');
+                if(document.getElementById('dialogue-' + stageNum)) {
+                    document.getElementById('dialogue-' + stageNum).style.display = 'block';
+                    document.getElementById('riddle-box-' + stageNum).style.display = 'none';
+                }
+            }
+            goTo(currentStageId);
+        }
 
-        let attemptsLeft = 3;
-        function checkPin() {
-            let pin = document.getElementById('pin-input').value;
-            if (pin === '0126') {
-                goTo('stage-inside');
-            } else {
-                attemptsLeft--;
-                document.getElementById('attempts').innerText = attemptsLeft;
-                if (attemptsLeft <= 0) {
-                    goTo('stage-cops');
-                } else {
-                    let safeInput = document.getElementById('pin-input');
-                    safeInput.style.transform = "translateX(-10px)";
-                    setTimeout(() => safeInput.style.transform = "translateX(10px)", 50);
-                    setTimeout(() => safeInput.style.transform = "translateX(0)", 100);
-                    safeInput.value = "";
-                }
-            }
-        }
+        let attemptsLeft = 3;
+        function checkPin() {
+            let pin = document.getElementById('pin-input').value;
+            if (pin === '0126') {
+                goTo('stage-inside');
+            } else {
+                attemptsLeft--;
+                document.getElementById('attempts').innerText = attemptsLeft;
+                if (attemptsLeft <= 0) {
+                    goTo('stage-cops');
+                } else {
+                    let safeInput = document.getElementById('pin-input');
+                    safeInput.style.transform = "translateX(-10px)";
+                    setTimeout(() => safeInput.style.transform = "translateX(10px)", 50);
+                    setTimeout(() => safeInput.style.transform = "translateX(0)", 100);
+                    safeInput.value = "";
+                }
+            }
+        }
 
-        // Logic for the escaping "NO" button
-        const noBtn = document.getElementById('no-btn');
-        noBtn.addEventListener('click', function(e) {
-            e.preventDefault(); 
-            this.style.position = "fixed";
-            
-            const maxX = window.innerWidth - this.clientWidth - 20;
-            const maxY = window.innerHeight - this.clientHeight - 20;
-            
-            const randomX = Math.max(20, Math.random() * maxX);
-            const randomY = Math.max(20, Math.random() * maxY);
-            
-            this.style.left = randomX + 'px';
-            this.style.top = randomY + 'px';
-        });
+        const noBtn = document.getElementById('no-btn');
+        noBtn.addEventListener('click', function(e) {
+            e.preventDefault(); 
+            this.style.position = "fixed";
+            
+            const maxX = window.innerWidth - this.clientWidth - 20;
+            const maxY = window.innerHeight - this.clientHeight - 20;
+            
+            const randomX = Math.max(20, Math.random() * maxX);
+            const randomY = Math.max(20, Math.random() * maxY);
+            
+            this.style.left = randomX + 'px';
+            this.style.top = randomY + 'px';
+        });
 
-        // Add Enter Key Functionality to all text inputs
-        document.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                if (e.target.tagName === 'INPUT') {
-                    e.preventDefault(); // Prevent form submission glitches
-                    // Find the submit button directly following the input
-                    let btn = e.target.nextElementSibling;
-                    if (btn && btn.tagName === 'BUTTON') {
-                        btn.click();
-                    }
-                }
-            }
-        });
-    </script>
+		// Allow pressing Enter to submit answers
+		document.querySelectorAll('input').forEach(input => {
+			input.addEventListener('keypress', function(event) {
+				if (event.key === 'Enter') {
+					event.preventDefault(); // Prevents any weird default behaviors
+					this.nextElementSibling.click(); // Triggers the button right after the input
+				}
+			});
+		});
+    </script>
 </body>
 </html>
